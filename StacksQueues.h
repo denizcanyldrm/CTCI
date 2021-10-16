@@ -474,3 +474,134 @@ private:
 };
 
 #endif //CTCI_STACKSQUEUES_H
+
+/*
+#define NUMBER_OF_STACKS 3
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    MyStack<int> st;
+    for (int i : arr)
+        st.Push(i);
+
+    st.Print();
+
+    MultiFixedStack<NUMBER_OF_STACKS, CAPACITY> fixedSt;
+    cout << "Initial: " << endl;
+    for (int i = 0; i < NUMBER_OF_STACKS; ++i)
+        cout << fixedSt.isEmpty(i) << " " << fixedSt.findTopIndex(i) << endl;
+
+    for (int i = 0; i < CAPACITY; ++i) {
+        fixedSt.Push(0, i + 1);
+        fixedSt.Push(1, i + 16);
+        fixedSt.Push(2, i + 31);
+    }
+
+    fixedSt.Print();
+
+    cout << "Sizes: " << endl;
+    for (int i = 0; i < NUMBER_OF_STACKS; ++i)
+        cout << fixedSt.Size(i) << " ";
+    cout << endl;
+
+    cout << "After push: " << endl;
+    for (int i = 0; i < NUMBER_OF_STACKS; ++i)
+        cout << fixedSt.findTopIndex(i) << " " << fixedSt.Peek(i) << " " << fixedSt.isEmpty(i) << endl;
+
+    cout << "Pop: " << endl;
+    for (int i = 0; i < NUMBER_OF_STACKS; ++i) {
+        for (int j = 0; j < CAPACITY; ++j)
+            cout << fixedSt.Pop(i) << " ";
+
+        cout << endl;
+    }
+
+    cout << "After pop: " << endl;
+    for (int i = 0; i < NUMBER_OF_STACKS; ++i)
+        cout << fixedSt.isEmpty(i) << " " << fixedSt.findTopIndex(i) << endl;
+
+    MyStack<int> st;
+    st.Push(4);
+    st.Push(5);
+    st.Push(2);
+    st.Push(3);
+    st.Push(1);
+
+    st.Print();
+
+    SetOfStacks<NUMBER_OF_STACKS, CAPACITY> st;
+    for (int i : arr)
+        st.Push(i);
+
+    cout << "isEmpty: " << st.isEmpty() << endl;
+    cout << "Peek:" << st.Peek() << endl;
+    st.Print();
+    cout << "isEmpty: " << st.isEmpty() << endl;
+    cout << "----------------" << endl;
+
+    SetOfStacks2<NUMBER_OF_STACKS, CAPACITY> st2;
+    for (int i : arr)
+        st2.Push(i);
+
+    cout << "size: " << st2.Size() << endl;
+    cout << "Peek: " << st2.Peek() << endl;
+    st2.Print();
+    cout << "isEmpty: " << st2.isEmpty() << endl;
+
+    MyQueueWithTwoStacks<int> q;
+    q.Add(1);
+    q.Add(2);
+    q.Add(3);
+    q.Remove();
+    q.Remove();
+    q.Add(4);
+    q.Add(5);
+    q.Remove();
+    q.Add(6);
+    q.Add(7);
+    q.Remove();
+    q.Remove();
+    q.Remove();
+    q.Remove();
+
+    int arr2[] = {3, 2, 4, 1, 5};
+    stack<int> st;
+    for (int i : arr2)
+        st.push(i);
+
+    Sort<int>(st);
+
+    stack<int> st2;
+    int arr3[] = {8, 12, 17, 3, 4, 13, 5, 23, 27, 51};
+    for (int i : arr3)
+        st2.push(i);
+
+    Sort<int>(st2);
+
+    AnimalQueue q;
+    q.Enqueue(new Cat()); // 1
+    q.Enqueue(new Dog()); // 2
+    q.Enqueue(new Cat()); // 3
+    q.Enqueue(new Dog()); // 4
+    q.Enqueue(new Cat()); // 5
+    q.Enqueue(new Dog()); // 6
+    q.Enqueue(new Cat()); // 7
+    q.Enqueue(new Dog()); // 8
+    q.Enqueue(new Cat()); // 9
+
+    q.DequeueCat();
+    q.DequeueDog();
+    q.DequeueAny();
+    q.DequeueCat();
+    q.DequeueDog();
+    q.DequeueDog();
+    q.DequeueDog();
+    q.DequeueAny();
+    q.DequeueAny();
+    cout << q.Size() << endl;
+
+    return 0;
+}
+ */
