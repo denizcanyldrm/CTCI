@@ -31,7 +31,7 @@ public:
     Tree() = default;
     ~Tree() = default;
 
-    void InsertNodes(TreeNode<T>* node ) {
+    void Insert(TreeNode<T>* node) {
         nodes.push_back(node);
     }
 
@@ -46,6 +46,39 @@ public:
 
     vector<TreeNode<T>*> nodes;
 };
+
+template<class T>
+class BinarySearchTree {
+public:
+    BinarySearchTree(): root(nullptr) {
+
+    };
+
+    ~BinarySearchTree() = default;
+
+    void Insert(TreeNode<T>* node, TreeNode<T>* & ref) {
+        if (nullptr == ref)
+            ref = node;
+        else if (node->data < ref->data) {
+            Insert(node, ref->left);
+        } else if (node->data > ref->data) {
+            Insert(node, ref->right);
+        }
+    }
+
+    void Clear() {
+    }
+
+//private:
+    TreeNode<T>* root;
+};
+
+int GetHeight(TreeNode<int>* root) {
+    if (nullptr == root)
+        return -1;
+
+    return max(GetHeight(root->left), GetHeight(root->right)) + 1;
+}
 
 void TraverseInOrder(TreeNode<int>* root) {
     if (nullptr != root) {
@@ -71,20 +104,20 @@ void TraversePostOrder(TreeNode<int>* root) {
     }
 }
 
-void PerformDfs(TreeNode<int>* root, unordered_set<TreeNode<int>*>& set) {
+void PerformDfs(TreeNode<int>* root, int depth, unordered_set<TreeNode<int>*>& set) {
     set.insert(root);
     if (nullptr != root) {
         if (set.find(root) != set.end()) {
-            cout << root->data << " ";
-            PerformDfs(root->left, set);
-            PerformDfs(root->right, set);
+            cout << root->data << "(" << depth << ") ";
+            PerformDfs(root->left, depth + 1, set);
+            PerformDfs(root->right, depth + 1, set);
         }
     }
 }
 
 void Dfs(TreeNode<int>* root) {
     unordered_set<TreeNode<int>*> set;
-    PerformDfs(root, set);
+    PerformDfs(root, 0, set);
 }
 
 void Bfs(TreeNode<int>* root) {
@@ -106,5 +139,18 @@ void Bfs(TreeNode<int>* root) {
         }
     }
 }
+
+template<class T>
+TreeNode<T>* CreateMinimalBST(T arr[], int left, int right) {
+    if (right < left)
+        return nullptr;
+
+    int middle = (left + right) / 2;
+
+    auto* root = new TreeNode<T>{arr[middle]};
+    root->left = CreateMinimalBST(arr, left, middle - 1);
+    root->right = CreateMinimalBST(arr, middle + 1, right);
+
+    return root;}
 
 #endif //CTCI_TREE_H
