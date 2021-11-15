@@ -11,10 +11,12 @@
 
 using namespace std;
 
+enum State { Unvisited, Visited, Visiting };
+
 template<class T>
 class GraphNode {
 public:
-    explicit GraphNode (T val): data(val), isVisited(false) {
+    explicit GraphNode (T val): data(val), indegree(0) {
 
     }
 
@@ -26,7 +28,8 @@ public:
     }
 
     T data;
-    bool isVisited;
+    int indegree;
+    State isVisited;
     vector<GraphNode*> adjList;
 };
 
@@ -49,24 +52,36 @@ public:
         nodes.clear();
     }
 
-    void SetVisitedStates() {
-        for (auto& n : nodes)
-            n->isVisited = false;
+    void Reset() {
+        ResetVisitedStates();
+        ResetIndegrees();
     }
 
     vector<GraphNode<T>*> nodes;
+
+private:
+    void ResetVisitedStates() {
+        for (auto& n : nodes)
+            n->isVisited = State::Unvisited;
+    }
+
+    void ResetIndegrees() {
+        for (auto& n : nodes)
+            n->indegree = 0;
+    }
 };
 
-void Dfs(GraphNode<int>* root) {
+void Dfs(GraphNode<int>* root, int indegree = 0) {
     if (nullptr == root)
         return;
 
-    if (!root->isVisited) {
-        root->isVisited = true;
-        cout << root->data << " ";
+    if (root->isVisited == State::Unvisited) {
+        root->isVisited = State::Visited;
+        root->indegree = indegree;
+        cout << root->data << "(" << root->indegree << ") ";
 
         for (auto n : root->adjList)
-            Dfs(n);
+            Dfs(n, indegree + 1);
     }
 }
 
@@ -75,17 +90,19 @@ void DfsIterative(GraphNode<int>* root) {
         return;
 
     stack<GraphNode<int>*> st;
+    root->indegree = 0;
     st.push(root);
 
     while (!st.empty()) {
         auto node = st.top();
         st.pop();
 
-        if (!node->isVisited) {
-            node->isVisited = true;
-            cout << node->data << " ";
+        if (node->isVisited == State::Unvisited) {
+            node->isVisited = State::Visited;
+            cout << node->data << "(" << node->indegree << ") ";
 
             for (auto n : node->adjList) {
+                n->indegree = node->indegree + 1;
                 st.push(n);
             }
         }
@@ -98,7 +115,7 @@ void Bfs(GraphNode<int>* root) {
 
     queue<GraphNode<int>*> q;
     q.push(root);
-    root->isVisited = true;
+    root->isVisited = State::Visited;
 
     while (!q.empty()) {
         GraphNode<int>* node = q.front();
@@ -106,12 +123,43 @@ void Bfs(GraphNode<int>* root) {
         cout << node->data << " ";
 
         for (auto& n : node->adjList) {
-            if (!n->isVisited) {
-                n->isVisited = true;
+            if (n->isVisited == State::Unvisited) {
+                n->isVisited = State::Visited;
                 q.push(n);
             }
         }
     }
+}
+
+bool FindRoute(GraphNode<int>* n1, GraphNode<int>* n2) {
+    if (nullptr == n1 || nullptr == n2)
+        return false;
+
+    if (n1 == n2)
+        return true;
+
+    queue<GraphNode<int>*> q;
+    q.push(n1);
+    n1->isVisited = State::Visiting;
+
+    while (!q.empty()) {
+        GraphNode<int>* node = q.front();
+        q.pop();
+
+        if (nullptr != node) {
+            for (auto& n : node->adjList) {
+                if (n->isVisited == State::Unvisited) {
+                    if (n == n2)
+                        return true;
+
+                    n->isVisited = State::Visiting;
+                    q.push(n);
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 #endif //CTCI_GRAPH_H

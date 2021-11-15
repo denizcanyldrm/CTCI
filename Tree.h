@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <unordered_set>
+#include <unordered_map>
 #include <queue>
 
 using namespace std;
@@ -14,13 +15,14 @@ using namespace std;
 template<class T>
 class TreeNode {
 public:
-    explicit TreeNode (T val): data(val), left(nullptr), right(nullptr) {
+    explicit TreeNode (T val): data(val), isVisited(false), left(nullptr), right(nullptr) {
 
     }
 
     ~TreeNode () = default;
 
     T data;
+    bool isVisited;
     TreeNode *left;
     TreeNode *right;
 };
@@ -152,6 +154,45 @@ TreeNode<T>* CreateMinimalBST(T arr[], int left, int right) {
     root->right = CreateMinimalBST(arr, middle + 1, right);
 
     return root;
+}
+
+template<class T>
+void CreateListOfDepthsPreOrder(TreeNode<T>* root, vector<vector<TreeNode<T>*>*>& res, int level) {
+    if (nullptr == root)
+        return;
+
+    cout << "data: " << root->data << " resSize: " << res.size() << " level: " << level << endl;
+    vector<TreeNode<T>*>* vec = nullptr;
+    if (res.size() == level) {
+        vec = new vector<TreeNode<T>*>{};
+        res.push_back(vec);
+    } else
+        vec = res[level];
+
+    vec->push_back(root);
+    CreateListOfDepthsPreOrder(root->left, res, level + 1);
+    CreateListOfDepthsPreOrder(root->right, res, level + 1);
+}
+
+template<class T>
+void CreateListOfDepthsBfs(TreeNode<T>* root, vector<vector<TreeNode<T>*>*>& res) {
+    if (nullptr == root)
+        return;
+
+    auto current = new vector<TreeNode<T>*>{root};
+    while (current->size() != 0) {
+        res.push_back(current);
+        auto parents = current;
+
+        current = new vector<TreeNode<T>*>{};
+        for (auto p : *parents) {
+            if (nullptr != p->left)
+                current->push_back(p->left);
+
+            if (nullptr != p->right)
+                current->push_back(p->right);
+        }
+    }
 }
 
 #endif //CTCI_TREE_H
