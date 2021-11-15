@@ -151,6 +151,7 @@ TreeNode<T>* CreateMinimalBST(T arr[], int left, int right) {
     root->left = CreateMinimalBST(arr, left, middle - 1);
     root->right = CreateMinimalBST(arr, middle + 1, right);
 
-    return root;}
+    return root;
+}
 
 #endif //CTCI_TREE_H
