@@ -15,11 +15,11 @@ using namespace std;
 template<class T>
 class TreeNode {
 public:
-    explicit TreeNode (T val): data(val), isVisited(false), left(nullptr), right(nullptr) {
+    explicit TreeNode(T val): data(val), isVisited(false), left(nullptr), right(nullptr) {
 
     }
 
-    ~TreeNode () = default;
+    ~TreeNode() = default;
 
     T data;
     bool isVisited;
