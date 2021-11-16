@@ -215,4 +215,19 @@ bool IsBalanced(TreeNode<T>* root) {
     return CheckBalanceTree(root) != -1;
 }
 
+template<class T>
+bool ValidateBST(TreeNode<T>* root, T min, T max) {
+    if (nullptr == root)
+        return true;
+
+    if (root->data <= min || root->data >= max)
+        return false;
+
+    return ValidateBST(root->left, min, root->data) && ValidateBST(root->right, root->data, max);
+}
+
+bool ValidateBST(TreeNode<int>* root) {
+    return ValidateBST(root, INT32_MIN, INT32_MAX);
+}
+
 #endif //CTCI_TREE_H
