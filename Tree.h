@@ -23,8 +23,8 @@ public:
 
     T data;
     bool isVisited;
-    TreeNode *left;
-    TreeNode *right;
+    TreeNode* left;
+    TreeNode* right;
 };
 
 template<class T>
@@ -75,7 +75,8 @@ public:
     TreeNode<T>* root;
 };
 
-int GetHeight(TreeNode<int>* root) {
+template<class T>
+int GetHeight(TreeNode<T>* root) {
     if (nullptr == root)
         return -1;
 
@@ -193,6 +194,25 @@ void CreateListOfDepthsBfs(TreeNode<T>* root, vector<vector<TreeNode<T>*>*>& res
                 current->push_back(p->right);
         }
     }
+}
+
+template<class T>
+int CheckBalanceTree(TreeNode<T>* root) {
+    if (nullptr == root)
+        return -1;
+
+    int cl = CheckBalanceTree(root->left);
+    int cr = CheckBalanceTree(root->right);
+
+    if (abs(cl - cr) > 1)
+        return -1;
+
+    return max(cl, cr) + 1;
+}
+
+template<class T>
+bool IsBalanced(TreeNode<T>* root) {
+    return CheckBalanceTree(root) != -1;
 }
 
 #endif //CTCI_TREE_H
