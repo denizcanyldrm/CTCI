@@ -15,7 +15,7 @@ using namespace std;
 template<class T>
 class TreeNode {
 public:
-    explicit TreeNode(T val): data(val), isVisited(false), left(nullptr), right(nullptr) {
+    explicit TreeNode(T val): data(val), isVisited(false), left(nullptr), right(nullptr), parent(nullptr) {
 
     }
 
@@ -25,6 +25,7 @@ public:
     bool isVisited;
     TreeNode* left;
     TreeNode* right;
+    TreeNode* parent;
 };
 
 template<class T>
@@ -154,6 +155,16 @@ TreeNode<T>* CreateMinimalBST(T arr[], int left, int right) {
     root->left = CreateMinimalBST(arr, left, middle - 1);
     root->right = CreateMinimalBST(arr, middle + 1, right);
 
+    if (nullptr != root->left) {
+        root->left->parent = root;
+        cout << root->left->data << " ->parent " << root->data << endl;
+    }
+
+    if (nullptr != root->right) {
+        root->right->parent = root;
+        cout << root->right->data << " ->parent " << root->data << endl;
+    }
+
     return root;
 }
 
@@ -228,6 +239,32 @@ bool ValidateBST(TreeNode<T>* root, T min, T max) {
 
 bool ValidateBST(TreeNode<int>* root) {
     return ValidateBST(root, INT32_MIN, INT32_MAX);
+}
+
+template<class T>
+TreeNode<T>* FındInorderSuccessor(TreeNode<T>* node) {
+    if (nullptr == node)
+        return nullptr;
+
+    if (nullptr != node->right) {
+        auto* c = node->right;
+        while (nullptr != c->left)
+            c = c->left;
+
+        return c;
+    }
+
+    if (nullptr != node->parent && node == node->parent->left)
+        return node->parent;
+
+    auto* c = node;
+    auto* p = node->parent;
+    while (nullptr != p && c == p->right) {
+        c = p;
+        p = p->parent;
+    }
+
+    return p;
 }
 
 #endif //CTCI_TREE_H
