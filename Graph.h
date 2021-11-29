@@ -6,6 +6,7 @@
 #define CTCI_GRAPH_H
 
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 #include <stack>
 
@@ -16,15 +17,17 @@ enum State { Unvisited, Visited, Visiting };
 template<class T>
 class GraphNode {
 public:
-    explicit GraphNode (T val): data(val), indegree(0) {
+    explicit GraphNode (T val): data(val), indegree(0), isVisited(State::Unvisited) {
 
     }
 
     ~GraphNode () = default;
 
     void AddEdge(GraphNode* node) {
-        if (nullptr != node)
+        if (nullptr != node) {
             adjList.push_back(node);
+            ++node->indegree;
+        }
     }
 
     T data;
@@ -39,8 +42,12 @@ public:
     Graph() = default;
     ~Graph() = default;
 
-    void InsertNodes(GraphNode<T>* node ) {
+    void InsertNodes(GraphNode<T>* node) {
         nodes.push_back(node);
+    }
+
+    void InsertEdge(GraphNode<T>* node1, GraphNode<T>* node2) {
+        edgeList.push_back(make_pair(node1, node2));
     }
 
     void ClearNodes() {
@@ -58,6 +65,7 @@ public:
     }
 
     vector<GraphNode<T>*> nodes;
+    vector<pair<GraphNode<T>*,GraphNode<T>*>> edgeList;
 
 private:
     void ResetVisitedStates() {
@@ -71,7 +79,8 @@ private:
     }
 };
 
-void Dfs(GraphNode<int>* root, int indegree = 0) {
+template<class T>
+void Dfs(GraphNode<T>* root, int indegree = 0) {
     if (nullptr == root)
         return;
 
@@ -85,11 +94,12 @@ void Dfs(GraphNode<int>* root, int indegree = 0) {
     }
 }
 
-void DfsIterative(GraphNode<int>* root) {
+template<class T>
+void DfsIterative(GraphNode<T>* root) {
     if (nullptr == root)
         return;
 
-    stack<GraphNode<int>*> st;
+    stack<GraphNode<T>*> st;
     root->indegree = 0;
     st.push(root);
 
@@ -109,7 +119,8 @@ void DfsIterative(GraphNode<int>* root) {
     }
 }
 
-void Bfs(GraphNode<int>* root) {
+template<class T>
+void Bfs(GraphNode<T>* root) {
     if (nullptr == root)
         return;
 
@@ -118,7 +129,7 @@ void Bfs(GraphNode<int>* root) {
     root->isVisited = State::Visited;
 
     while (!q.empty()) {
-        GraphNode<int>* node = q.front();
+        GraphNode<T>* node = q.front();
         q.pop();
         cout << node->data << " ";
 
@@ -131,7 +142,8 @@ void Bfs(GraphNode<int>* root) {
     }
 }
 
-bool FindRoute(GraphNode<int>* n1, GraphNode<int>* n2) {
+template<class T>
+bool FindRoute(GraphNode<T>* n1, GraphNode<T>* n2) {
     if (nullptr == n1 || nullptr == n2)
         return false;
 
@@ -143,7 +155,7 @@ bool FindRoute(GraphNode<int>* n1, GraphNode<int>* n2) {
     n1->isVisited = State::Visiting;
 
     while (!q.empty()) {
-        GraphNode<int>* node = q.front();
+        GraphNode<T>* node = q.front();
         q.pop();
 
         if (nullptr != node) {
@@ -160,6 +172,88 @@ bool FindRoute(GraphNode<int>* n1, GraphNode<int>* n2) {
     }
 
     return false;
+}
+
+template<class T>
+void TopologicalSort(Graph<T> & graph) {
+    if (0 == graph.nodes.size())
+        return;
+
+    unordered_map<GraphNode<T>*, int> map;
+    queue<GraphNode<T>*> q;
+    for (auto n : graph.nodes) {
+        if (n->indegree == 0)
+            q.push(n);
+
+        map[n] = n->indegree;
+    }
+
+    queue<T> res;
+    while (!q.empty()) {
+        auto root = q.front();
+        q.pop();
+
+        res.push(root->data);
+        if (root->isVisited != State::Visited) {
+            root->isVisited = State::Visited;
+
+            for (auto n : root->adjList) {
+                --map[n];
+                if (map[n] == 0) {
+                    q.push(n);
+                }
+            }
+        }
+    }
+
+    cout << "TopologicalSort: ";
+    while (!res.empty()) {
+        cout << res.front() << " ";
+        res.pop();
+    }
+    cout << endl;
+}
+
+template<class T>
+bool TopologicalSort(GraphNode<T>* root, stack<T> & st) {
+    if (nullptr == root)
+        return true;
+
+    if (State::Visiting == root->isVisited)
+        return false;
+
+    if (State::Unvisited == root->isVisited) {
+        root->isVisited = State::Visiting;
+
+        for (auto n : root->adjList) {
+            if (!TopologicalSort(n, st))
+                return false;
+        }
+
+        st.push(root->data);
+        root->isVisited = State::Visited;
+    }
+
+    return true;
+}
+
+template<class T>
+void TopologicalSortDfs(Graph<T> & g) {
+    stack<T> st;
+
+    for (auto n : g.nodes) {
+        if (State::Unvisited == n->isVisited) {
+            if (!TopologicalSort(n, st))
+                return;
+        }
+    }
+
+    cout << "TopologicalSort: ";
+    while (!st.empty()) {
+        cout << st.top() << " ";
+        st.pop();
+    }
+    cout << endl;
 }
 
 #endif //CTCI_GRAPH_H
